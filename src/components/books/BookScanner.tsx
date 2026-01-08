@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Html5Qrcode, Html5QrcodeScanType } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Camera, CameraOff, Loader2, BookOpen } from 'lucide-react';
@@ -67,7 +67,6 @@ export function BookScanner({ onScan, onError }: BookScannerProps) {
           fps: 10,
           qrbox: { width: 250, height: 150 },
           aspectRatio: 1.5,
-          supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
         },
         handleScanSuccess,
         () => {} // Ignorer les erreurs de scan (normal pendant la recherche)

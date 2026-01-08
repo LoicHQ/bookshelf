@@ -28,9 +28,9 @@ export function BookCard({ book, onClick, showRating = true, showStatus = true }
   const userBookData = isUserBook ? (book as UserBook) : null;
 
   const coverImage = bookData.coverImage || bookData.thumbnail;
-  const authors = Array.isArray(bookData.authors) 
+  const authors = Array.isArray(bookData.authors) && bookData.authors.length > 0
     ? bookData.authors.join(', ') 
-    : bookData.author || 'Auteur inconnu';
+    : 'Auteur inconnu';
 
   return (
     <Card
