@@ -1,0 +1,196 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// USER & AUTHENTICATION
+// ============================================================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  books         UserBook[]
+  widgets       UserWidget[]
+  messages      Message[]
+  chatRooms     ChatRoomMember[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================================================
+// BOOKS
+// ============================================================================
+
+model Book {
+  id            String   @id @default(cuid())
+  isbn          String?  @unique
+  isbn13        String?  @unique
+  title         String
+  author        String
+  authors       String[] // Pour les livres avec plusieurs auteurs
+  description   String?  @db.Text
+  coverImage    String?
+  thumbnail     String?
+  publishedDate String?
+  publisher     String?
+  pageCount     Int?
+  categories    String[]
+  language      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  userBooks UserBook[]
+}
+
+model UserBook {
+  id        String     @id @default(cuid())
+  userId    String
+  bookId    String
+  status    BookStatus @default(TO_READ)
+  rating    Int? // 1-5 étoiles
+  notes     String?    @db.Text
+  review    String?    @db.Text
+  startDate DateTime?
+  endDate   DateTime?
+  favorite  Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@index([userId])
+  @@index([bookId])
+  @@index([status])
+}
+
+enum BookStatus {
+  TO_READ
+  READING
+  COMPLETED
+  ABANDONED
+  ON_HOLD
+}
+
+// ============================================================================
+// CUSTOMIZABLE UI - WIDGETS
+// ============================================================================
+
+model UserWidget {
+  id         String   @id @default(cuid())
+  userId     String
+  widgetType String // "recent_books", "stats", "goals", "friends_activity"
+  position   Int
+  column     Int      @default(0) // Pour un layout en colonnes
+  config     Json? // Configuration spécifique du widget
+  isVisible  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ============================================================================
+// CHAT & SOCIAL
+// ============================================================================
+
+model ChatRoom {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  image       String?
+  isGroup     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  members  ChatRoomMember[]
+  messages Message[]
+}
+
+model ChatRoomMember {
+  id         String   @id @default(cuid())
+  userId     String
+  chatRoomId String
+  role       String   @default("member") // "admin", "member"
+  joinedAt   DateTime @default(now())
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chatRoom ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, chatRoomId])
+  @@index([chatRoomId])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  content    String   @db.Text
+  userId     String
+  chatRoomId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chatRoom ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+
+  @@index([chatRoomId])
+  @@index([userId])
+}

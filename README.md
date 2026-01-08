@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BookShelf 📚
 
-## Getting Started
+Votre bibliothèque personnelle - Gérez, notez et partagez vos lectures.
 
-First, run the development server:
+## Fonctionnalités
+
+- **Gestion de bibliothèque** - Ajoutez, organisez et notez vos livres
+- **Scanner de livres** - Scannez les codes-barres ISBN pour ajouter rapidement des livres
+- **Interface personnalisable** - Widgets drag & drop pour personnaliser votre espace
+- **Chat communautaire** - Discutez avec d'autres lecteurs
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Langage**: TypeScript
+- **Base de données**: PostgreSQL (Supabase)
+- **ORM**: Prisma
+- **Auth**: NextAuth.js v5
+- **UI**: Tailwind CSS + shadcn/ui
+- **Tests**: Vitest + Testing Library
+
+## Prérequis
+
+- Node.js 20+
+- npm ou yarn
+- Compte Supabase (pour la base de données)
+
+## Installation
+
+1. **Cloner le repository**
+
+```bash
+git clone https://github.com/LoicHQ/bookshelf.git
+cd bookshelf
+```
+
+2. **Installer les dépendances**
+
+```bash
+npm install
+```
+
+3. **Configurer les variables d'environnement**
+
+```bash
+cp .env.example .env.local
+```
+
+Remplissez les valeurs dans `.env.local` :
+- Créez un projet sur [Supabase](https://supabase.com)
+- Récupérez les credentials de la base de données
+- Générez un secret NextAuth : `openssl rand -base64 32`
+
+4. **Initialiser la base de données**
+
+```bash
+npm run db:push
+```
+
+5. **Lancer le serveur de développement**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrez [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts disponibles
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Commande | Description |
+|----------|-------------|
+| `npm run dev` | Serveur de développement (Turbopack) |
+| `npm run build` | Build de production |
+| `npm run start` | Démarrer en production |
+| `npm run lint` | Linter ESLint |
+| `npm run type-check` | Vérification des types TypeScript |
+| `npm run format` | Formater avec Prettier |
+| `npm run test` | Lancer les tests |
+| `npm run db:studio` | Ouvrir Prisma Studio |
 
-## Learn More
+## Structure du projet
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/                    # Routes Next.js (App Router)
+│   ├── (auth)/             # Pages d'authentification
+│   ├── (main)/             # Pages principales
+│   └── api/                # Routes API
+├── components/             # Composants React
+│   ├── ui/                 # Composants shadcn/ui
+│   ├── books/              # Composants livres
+│   ├── chat/               # Composants chat
+│   └── customizable/       # Widgets personnalisables
+├── lib/                    # Utilitaires et configurations
+├── hooks/                  # Custom React hooks
+├── types/                  # Types TypeScript
+└── services/               # Services et API
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Déploiement
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Vercel (recommandé)
 
-## Deploy on Vercel
+1. Connectez votre repository GitHub à Vercel
+2. Configurez les variables d'environnement
+3. Déployez !
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### PWA sur iOS
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+L'application est configurée comme Progressive Web App :
+1. Ouvrez l'app sur Safari iOS
+2. Appuyez sur "Partager" → "Sur l'écran d'accueil"
+
+## Licence
+
+MIT
